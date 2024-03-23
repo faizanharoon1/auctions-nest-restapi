@@ -10,7 +10,7 @@ import { AuctionItem } from './auctions/auctionitems/entities/auction.item.entit
 import { AuctionitemsModule } from './auctions/auctionitems/auctionitems.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { DynamoDbModule } from './database/dynamo.db.module';
-
+import { LogmoduleModule } from './logmodule/logmodule.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -34,7 +34,8 @@ import { DynamoDbModule } from './database/dynamo.db.module';
     AuctionsModule,
     AuctionitemsModule,
     BidsModule,
-    DynamoDbModule
+    DynamoDbModule,
+    LogmoduleModule
   ],
   controllers: [AppController],
   providers: [AppService],

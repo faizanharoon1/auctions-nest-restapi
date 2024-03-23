@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Auction } from 'src/auctions/entities/auction.entity';
-import { DatabaseService } from 'src/database/database.service';
+import { DatabaseService } from 'src/database/mysql.db.service';
 import { AuctionDto,  CreateAuctionDto } from './dto/create-auction-dto';
 import { AuctionitemsService } from 'src/auctions/auctionitems/auctionitems.service';
 import { AuctionItemDTO } from './auctionitems/dto/auction-items-dto';

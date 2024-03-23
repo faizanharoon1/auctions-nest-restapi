@@ -10,6 +10,7 @@ import { Cache } from 'cache-manager';
 import { Bid } from './entities/bid.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { DynamoDBService } from 'src/database/dynamo.db.service';
+import { MyLogger } from 'src/logmodule/logmodule.service';
 
 @Injectable()
 export class BidsService {
@@ -21,7 +22,7 @@ export class BidsService {
   ) {}
 
   private tableName = 'Bids';
-
+ private readonly logger = new MyLogger();
   async submit_bid(createBidDto: CreateBidDto): Promise<string> {
     let auction = await this.GetAuction(createBidDto);
 
@@ -30,10 +31,10 @@ export class BidsService {
        throw new BadRequestException(`The reserve price has not been met for ${auction.auctionName}`);
     } 
 
-       if (createBidDto.bidderName < auction.createdBy) {
+       if (createBidDto.bidderName === auction.createdBy) {
        throw new BadRequestException(`You are the owner of this auction: ${auction.auctionName}`);
     } 
-
+ 
     // Find the highest current bid for the auction
     const currentHighestBid = await this.GetHighestBidFromRedis(createBidDto.auctionId);
     //console.log(currentHighestBid.auctionId)
@@ -73,9 +74,10 @@ const params = {
       throw new Error("Error creating bid");
     }
 
-
+  this.logger.log(`Bid received:Bidder:${createBidDto.bidderName}`)
     if(!sameBidder && bidAmount > 0)
     {
+      
     auction.bidderName=createBidDto.bidderName;
     auction.currentBid=bidAmount;
 
@@ -91,9 +93,15 @@ const params = {
         : You have been outbid for auction:${auction.auctionName}!`);
     }
 
+
+
  return "Bid request processed!";
   }
 
+  private async createlog(message:string)
+  {
+
+  }
   private async GetAuction(createBidDto: CreateBidDto) {
     const cacheKey = `auction_${createBidDto.auctionId}`;
     let auction = await this.cacheManager.get<Auction>(cacheKey);
